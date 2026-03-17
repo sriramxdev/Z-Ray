@@ -5,6 +5,8 @@ import numpy as np
 import cv2
 import joblib
 import os
+import onnxruntime as ort
+import joblib
 
 app = FastAPI(title="Z-Ray Tri-Modal AI Gateway", version="1.0.0")
 
@@ -21,19 +23,31 @@ app.add_middleware(
 # ==========================================
 print("🚀 Initializing Z-Ray Core...")
 
-# Load ONNX INT8 Sessions
-onnx_sessions = {
-    "xray": ort.InferenceSession("deployment/onnx_assets/zray_xray_int8.onnx"),
-    "ecg": ort.InferenceSession("deployment/onnx_assets/zray_ecg_int8.onnx"),
-    "mri": ort.InferenceSession("deployment/onnx_assets/zray_mri_int8.onnx")
-}
+# Get the absolute path to the web-backend directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ONNX_DIR = os.path.join(BASE_DIR, "deployment", "onnx_assets")
+FUSION_DIR = os.path.join(BASE_DIR, "deployment", "fusion_rf_assets")
 
-# Load Random Forest Fusion Models
-fusion_models = {
-    "xray": joblib.load("deployment/fusion_assets/xray_fusion.joblib"),
-    "ecg": joblib.load("deployment/fusion_assets/ecg_fusion.joblib"),
-    "mri": joblib.load("deployment/fusion_assets/mri_fusion.joblib")
-}
+try:
+    # Load ONNX INT8 Sessions safely
+    onnx_sessions = {
+        "xray": ort.InferenceSession(os.path.join(ONNX_DIR, "zray_xray_int8.onnx")),
+        "ecg": ort.InferenceSession(os.path.join(ONNX_DIR, "zray_ecg_int8.onnx")),
+        "mri": ort.InferenceSession(os.path.join(ONNX_DIR, "zray_mri_int8.onnx"))
+    }
+
+    # Load Random Forest Fusion Models safely
+    fusion_models = {
+        "xray": joblib.load(os.path.join(FUSION_DIR, "xray_fusion.joblib")),
+        "ecg": joblib.load(os.path.join(FUSION_DIR, "ecg_fusion.joblib")),
+        "mri": joblib.load(os.path.join(FUSION_DIR, "mri_fusion.joblib"))
+    }
+    print("✅ All INT8 Engines and Fusion Layers Loaded.")
+    
+except Exception as e:
+    print(f"❌ CRITICAL ERROR LOADING ASSETS: {e}")
+    print(f"Please verify files exist in: {ONNX_DIR}")
+    raise e
 
 # Clinical Classes
 CLASSES = {
