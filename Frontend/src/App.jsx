@@ -7,6 +7,8 @@ import Patients from "./Pages/Patients"
 import Analytics from "./Pages/Analytics"
 import Result from "./Pages/Result"
 import Register from "./Pages/Register"
+import About from "./Pages/About"
+
 
 function App(){
 
@@ -18,7 +20,10 @@ return(
 
 <Route path="/" element={<Login />} />
 
-<Route path="/register" element={<Register />} />
+<Route path="/register" element={<Register />} /> 
+
+<Route path="/about" element={<About />} />
+
 
 <Route path="/dashboard" element={<Dashboard />} />
 

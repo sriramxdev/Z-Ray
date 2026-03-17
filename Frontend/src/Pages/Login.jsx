@@ -175,12 +175,7 @@ function Login() {
               />
             </div>
 
-            {/* Forgot */}
-            <div className="text-right">
-              <span className="text-sm text-blue-600 cursor-pointer hover:underline">
-                Forgot Password?
-              </span>
-            </div>
+            
 
             {/* Button */}
             <button className="w-full bg-blue-600 text-white p-3 rounded-xl hover:bg-blue-700 transition">

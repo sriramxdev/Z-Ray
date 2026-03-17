@@ -80,8 +80,105 @@
 //   )
 // }
 
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+// import { useState } from "react"
+// import { useNavigate } from "react-router-dom"
+// import {
+//   Home,
+//   FileText,
+//   BarChart,
+//   Info,
+//   ScanLine,
+//   HeartPulse
+// } from "lucide-react"
+
+// const menu = [
+//   { name: "Dashboard", icon: Home },
+//   { name: "X-Ray Analysis", icon: ScanLine },
+//   { name: "MRI Analysis", icon: ScanLine },
+//   { name: "ECG Analysis", icon: HeartPulse },
+//   { name: "History", icon: FileText },
+//   { name: "Trends", icon: BarChart },
+//   { name: "About", icon: Info },
+// ]
+
+// export default function Sidebar() {
+//   const [active, setActive] = useState("Dashboard")
+//   const navigate = useNavigate()
+
+//   const handleLogout = () => {
+//     localStorage.removeItem("token")
+//     navigate("/")
+//   }
+
+//   return (
+//     <div className="w-64 h-screen bg-gradient-to-b from-blue-700 to-blue-500 text-white rounded-r-3xl shadow-xl flex flex-col">
+
+//       {/* Top */}
+//       <div className="p-5">
+//         <h1 className="text-2xl font-bold">AI Diagnostics</h1>
+//       </div>
+
+//       {/* Menu (fills space properly) */}
+//       <div className="flex-1 flex flex-col justify-evenly px-3">
+
+//         {menu.map((item, i) => {
+//           const Icon = item.icon
+//           const isActive = active === item.name
+
+//           return (
+//             <div
+//               key={i}
+//               onClick={() => setActive(item.name)}
+//               className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200
+              
+//               ${isActive
+//                 ? "bg-white text-blue-700 shadow-md"
+//                 : "hover:bg-white/20"
+//               }`}
+//             >
+//               <Icon size={18} />
+//               <span className="font-medium">{item.name}</span>
+//             </div>
+//           )
+//         })}
+
+//       </div>
+
+//       {/* Bottom Logout */}
+//       <div className="p-4">
+//         <button
+//           onClick={handleLogout}
+//           className="w-full bg-white text-blue-700 py-2 rounded-xl hover:bg-gray-100 transition"
+//         >
+//           Logout
+//         </button>
+//       </div>
+
+//     </div>
+//   )
+// }
+
+// import { useNavigate } from "react-router-dom"
+// import {
+//   Home,
+//   FileText,
+//   BarChart,
+//   Info,
+//   ScanLine,
+//   HeartPulse
+// } from "lucide-react"
+
+// const menu = [
+//   { name: "Dashboard", icon: Home },
+//   { name: "X-Ray Analysis", icon: ScanLine },
+//   { name: "MRI Analysis", icon: ScanLine },
+//   { name: "ECG Analysis", icon: HeartPulse },
+//   { name: "History", icon: FileText },
+//   { name: "Trends", icon: BarChart },
+//   { name: "About", icon: Info },
+// ]
+
+import { NavLink, useNavigate } from "react-router-dom"
 import {
   Home,
   FileText,
@@ -92,17 +189,72 @@ import {
 } from "lucide-react"
 
 const menu = [
-  { name: "Dashboard", icon: Home },
-  { name: "X-Ray Analysis", icon: ScanLine },
-  { name: "MRI Analysis", icon: ScanLine },
-  { name: "ECG Analysis", icon: HeartPulse },
-  { name: "History", icon: FileText },
-  { name: "Trends", icon: BarChart },
-  { name: "About", icon: Info },
+  { name: "Dashboard", icon: Home, path: "/dashboard" },
+  { name: "X-Ray Analysis", icon: ScanLine, path: "/xray" },
+  { name: "MRI Analysis", icon: ScanLine, path: "/mri" },
+  { name: "ECG Analysis", icon: HeartPulse, path: "/ecg" },
+  { name: "History", icon: FileText, path: "/history" },
+  { name: "Trends", icon: BarChart, path: "/trends" },
+  { name: "About", icon: Info, path: "/about" },   // ✅ IMPORTANT
 ]
+// export default function Sidebar({ active, setActive }) {
+//   const navigate = useNavigate()
+
+//   const handleLogout = () => {
+//     localStorage.removeItem("token")
+//     navigate("/")
+//   }
+
+//   return (
+//     <div className="w-64 h-screen bg-gradient-to-b from-blue-700 to-blue-500 text-white rounded-r-3xl shadow-xl flex flex-col">
+
+//       {/* Top */}
+//       <div className="p-5">
+//         <h1 className="text-2xl font-bold">AI Diagnostics</h1>
+//       </div>
+
+//       {/* Menu */}
+//       <div className="flex-1 flex flex-col justify-evenly px-3">
+
+//         {menu.map((item, i) => {
+//           const Icon = item.icon
+//           const isActive = active === item.name
+
+//           return (
+//             <div
+//               key={i}
+//               onClick={() => setActive(item.name)}   // 🔥 IMPORTANT
+//               className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200
+              
+//               ${
+//                 isActive
+//                   ? "bg-white text-blue-700 shadow-md"
+//                   : "hover:bg-white/20"
+//               }`}
+//             >
+//               <Icon size={18} />
+//               <span className="font-medium">{item.name}</span>
+//             </div>
+//           )
+//         })}
+
+//       </div>
+
+//       {/* Logout */}
+//       <div className="p-4">
+//         <button
+//           onClick={handleLogout}
+//           className="w-full bg-white text-blue-700 py-2 rounded-xl hover:bg-gray-100 transition"
+//         >
+//           Logout
+//         </button>
+//       </div>
+
+//     </div>
+//   )
+// }
 
 export default function Sidebar() {
-  const [active, setActive] = useState("Dashboard")
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -113,38 +265,39 @@ export default function Sidebar() {
   return (
     <div className="w-64 h-screen bg-gradient-to-b from-blue-700 to-blue-500 text-white rounded-r-3xl shadow-xl flex flex-col">
 
-      {/* Top */}
+      {/* Logo */}
       <div className="p-5">
         <h1 className="text-2xl font-bold">AI Diagnostics</h1>
       </div>
 
-      {/* Menu (fills space properly) */}
+      {/* Menu */}
       <div className="flex-1 flex flex-col justify-evenly px-3">
 
         {menu.map((item, i) => {
           const Icon = item.icon
-          const isActive = active === item.name
 
           return (
-            <div
+            <NavLink
               key={i}
-              onClick={() => setActive(item.name)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200
-              
-              ${isActive
-                ? "bg-white text-blue-700 shadow-md"
-                : "hover:bg-white/20"
-              }`}
+              to={item.path}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
+                ${
+                  isActive
+                    ? "bg-white text-blue-700 shadow-md"
+                    : "hover:bg-white/20"
+                }`
+              }
             >
               <Icon size={18} />
               <span className="font-medium">{item.name}</span>
-            </div>
+            </NavLink>
           )
         })}
 
       </div>
 
-      {/* Bottom Logout */}
+      {/* Logout */}
       <div className="p-4">
         <button
           onClick={handleLogout}

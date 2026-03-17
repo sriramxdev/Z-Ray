@@ -40,11 +40,19 @@ export default function Register() {
           MEDICAL AI
         </h1>
 
-        <Link to="/">
+        {/* <Link to="/">
           <div className="p-4 rounded-2xl bg-white shadow-sm hover:shadow-md hover:-translate-y-1 transition cursor-pointer">
             Login
           </div>
-        </Link>
+        </Link> */}
+        <Link to="/">
+  <div className="p-4 rounded-2xl bg-white text-blue-600 shadow-sm 
+                  hover:bg-blue-600 hover:text-white 
+                  hover:shadow-md hover:-translate-y-1 
+                  transition duration-300 ease-in-out cursor-pointer">
+    Login
+  </div>
+</Link>
 
         <Link to="/register">
           <div className="p-4 rounded-2xl bg-blue-600 text-white shadow-md hover:shadow-lg hover:-translate-y-1 transition cursor-pointer">
@@ -52,13 +60,15 @@ export default function Register() {
           </div>
         </Link>
 
-        <div className="p-4 rounded-2xl bg-white shadow-sm hover:shadow-md hover:-translate-y-1 transition cursor-pointer">
+        {/* <div className="p-4 rounded-2xl bg-white shadow-sm hover:shadow-md hover:-translate-y-1 transition cursor-pointer">
           About
-        </div>
+        </div> */}
+        <Link to="/about">
+  <div className="p-4 rounded-2xl bg-white shadow-sm hover:bg-blue-600 hover:text-white hover:shadow-md hover:-translate-y-1 transition cursor-pointer">
+    About
+  </div>
+</Link>
 
-        <div className="p-4 rounded-2xl bg-white shadow-sm hover:shadow-md hover:-translate-y-1 transition cursor-pointer">
-          Documentation
-        </div>
       </div>
 
       {/* RIGHT CONTENT */}
