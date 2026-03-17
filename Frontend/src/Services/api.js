@@ -1,12 +1,12 @@
 import axios from "axios"
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api"
+  baseURL: "/diagnose"
 })
 
-export const analyzeScanAPI = async (formData) => {
+export const analyzeScanAPI = async (formData, modality = "xray") => {
 
-const res = await API.post("/analyze", formData)
+const res = await API.post(`/${modality}`, formData)
 
 return res.data
 
