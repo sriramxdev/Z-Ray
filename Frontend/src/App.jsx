@@ -6,6 +6,7 @@ import UploadScan from "./Pages/UploadScan"
 import Patients from "./Pages/Patients"
 import Analytics from "./Pages/Analytics"
 import Result from "./Pages/Result"
+import Register from "./Pages/Register"
 
 function App(){
 
@@ -16,6 +17,8 @@ return(
 <Routes>
 
 <Route path="/" element={<Login />} />
+
+<Route path="/register" element={<Register />} />
 
 <Route path="/dashboard" element={<Dashboard />} />
 
