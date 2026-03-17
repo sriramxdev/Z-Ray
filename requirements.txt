@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+python-multipart
+onnxruntime
+numpy
+opencv-python-headless
+scikit-learn
+joblib
