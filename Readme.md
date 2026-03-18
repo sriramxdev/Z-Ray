@@ -10,7 +10,7 @@
 
 ## 🚀 Core Engine Architecture
 
-### Data Flow Diagram (DFD)
+## 🌍 Data Flow Diagram (DFD)
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#3b82f6', 'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#fff'}}}%%
 graph TD
@@ -56,7 +56,7 @@ graph TD
     end
 
     %% --- Data Stores ---
-    D_Postgres[(fa:fa-database SQLite (Flask)<br/>Patient Diagnostic Records)]:::DataStore
+    D_Postgres[("fa:fa-database SQLite (Flask)<br/>Patient Diagnostic Records")]:::DataStore
 
     %% --- DATA FLOWS ---
 
@@ -104,7 +104,7 @@ graph TD
     P_WebUI == Dynamic Rendering ==> E_Doctor
 ```
 
-### Entity-Relationship (ER) Diagram
+## 🗄️ Entity-Relationship (ER) Diagram
 ```mermaid
 erDiagram
     %% --- Entities & Attributes ---
