@@ -23,10 +23,10 @@ graph TD
         I_FormInput[("Age, Gender,<br/>History (Tabular)")]:::External
     end
 
-    subgraph SG_XRay ["2. X-Ray Modality Pipeline"]
+    subgraph SG_XRay ["2. Chest X-Ray Pipeline"]
         P_XrayPrep("fa:fa-image OpenCV<br/>Resize [224,224]<br/>Grayscale to RGB<br/>Normalize"):::PreProcess
-        P_DenseNetONNX("fa:fa-microchip ONNX<br/>DenseNet121<br/>Feature Extractor<br/>(Weights: Scratch)"):::NeuralNet
-        P_XrayRF("fa:fa-brain scikit-learn<br/>Random Forest<br/>Pathology Classifier<br/>(15 Classes)"):::ClinicalFusion
+        P_VisionNetONNX("fa:fa-microchip ONNX<br/>Z-Ray VisionNet<br/>Feature Extractor<br/>(Weights: Scratch)"):::NeuralNet
+        P_XrayRF("fa:fa-brain scikit-learn<br/>Random Forest<br/>Pathology Classifier<br/>(2 Classes: Normal / Pneumonia)"):::ClinicalFusion
     end
 
     subgraph SG_ECG ["3. ECG Modality Pipeline"]
@@ -36,13 +36,13 @@ graph TD
     end
 
     %% --- Data Stores ---
-    D_Postgres[("fa:fa-database SQLite (Flask)<br/>Patient Diagnostic Records")]:::DataStore
+    D_Postgres[(fa:fa-database PostgreSQL<br/>Patient Diagnostic Records)]:::DataStore
 
     %% --- DATA FLOWS ---
 
     %% 1. Upload & Route
     E_Doctor -. Selects File .-> E_FileSystem
-    E_FileSystem -- Raw PNG / CSV / Array --> P_WebUI
+    E_FileSystem -- Raw PNG / CSV --> P_WebUI
     I_FormInput -- Demographics (Integers) --> P_WebUI
     
     P_WebUI == POST request FormData<br/>(File + Tabular Data) ==> P_FastAPIGateway
@@ -53,8 +53,8 @@ graph TD
     P_FastAPIGateway -- Demographics --> SG_XRay & SG_ECG
 
     %% Detailed Modal Flows
-    P_XrayPrep -- Preprocessed Tensor<br/>[1, 3, 224, 224] --> P_DenseNetONNX
-    P_DenseNetONNX -- 15 AI Probabilities --> P_XrayRF
+    P_XrayPrep -- Preprocessed Tensor<br/>[1, 3, 224, 224] --> P_VisionNetONNX
+    P_VisionNetONNX -- 2 AI Probabilities --> P_XrayRF
     P_FastAPIGateway -- Tabular History --> P_XrayRF
     P_XrayRF -- Diagnostic Conclusion + Confidence --> P_OutputFormatter
 
@@ -76,4 +76,3 @@ graph TD
     P_OutputFormatter == JSON Response<br/>(Full Diagnostic Payload) ==> P_FastAPIGateway
     P_FastAPIGateway == JSON Response payload ==> P_WebUI
     P_WebUI == Dynamic Rendering ==> E_Doctor
-```
