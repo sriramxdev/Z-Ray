@@ -4,7 +4,7 @@
 [![Tech Stack](https://img.shields.io/badge/Tech-PyTorch%20%7C%20FastAPI%20%7C%20Vite-orange)](https://github.com/Zeta-Coders/Z-Ray)
 [![Model Optimization](https://img.shields.io/badge/Optimization-INT8%20Quantization%20%7C%20ONNX-green)](https://github.com/Zeta-Coders/Z-Ray)
 
-**Z-Ray** is a high-performance, multi-modal AI diagnostic suite developed by **Zeta Coders**. It integrates X-Ray, MRI, and ECG analysis into a unified "Glass-Box" dashboard, providing clinicians with high-accuracy predictions backed by visual heatmaps and clinical fusion.
+**Z-Ray** is a high-performance, multi-modal AI diagnostic suite developed by **Zeta Coders**. It integrates X-Ray and ECG analysis into a unified "Glass-Box" dashboard, providing clinicians with high-accuracy predictions backed by visual heatmaps and clinical fusion.
 
 ---
 
@@ -12,7 +12,7 @@
 
 ## ✨ Key Features
 
-*   **Multi-Modal Analysis:** Unified interface for Chest X-Ray, Knee MRI, and 12-Lead ECG.
+*   **Multi-Modal Analysis:** Unified interface for Chest X-Ray and 12-Lead ECG.
 *   **Explainable AI (XAI):** Real-time Grad-CAM heatmaps for X-Rays and dynamic human-readable clinical reasoning for ECGs.
 *   **Intelligent Signal Processing:** Automated lead mapping and sampling rate standardization (Scipy-powered interpolation).
 *   **Clinical Fusion:** Random Forest layers that combine neural features with patient demographics (Age/Gender) for superior diagnostic accuracy.
@@ -37,11 +37,7 @@
 *   **Dataset:** NIH Chest X-ray 14 (112,120 clinical images).
 *   **Explainability:** **Grad-CAM** heatmaps highlight acute pathology regions (e.g., Pneumothorax, Effusion).
 
-### 2. Volumetric Engine (Knee MRI)
-*   **Strategy:** **2.5D Spatial Stacking** – Processes 3D slices as multi-channel inputs.
-*   **Hybrid Reasoning:** Fuses computer vision with meta-data using a **Random Forest** bridge.
-
-### 3. Signal Engine (12-Lead ECG)
+### 2. Signal Engine (12-Lead ECG)
 *   **Architecture:** 1D-Residual Network (1D-ResNet).
 *   **Feature Engineering:** 
     *   **Auto-standardization:** Automatically resamples signals to 1000Hz using Cubic Spline Interpolation.

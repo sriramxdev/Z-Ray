@@ -27,10 +27,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M9 16h6"/></svg>
           <span class="sidebar-label">X-Ray Analysis</span>
         </a></li>
-        <li><a href="mri.html" class="sidebar-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="12" rx="9" ry="10"/><ellipse cx="12" cy="12" rx="5" ry="10"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
-          <span class="sidebar-label">MRI Analysis</span>
-        </a></li>
+        <li><a href="ecg.html" class="sidebar-link">
         <li><a href="ecg.html" class="sidebar-link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2,14 6,14 8,6 12,20 14,10 16,14 22,14"/></svg>
           <span class="sidebar-label">ECG Analysis</span>
@@ -97,7 +94,7 @@
 
         tbody.innerHTML = records.map(r => {
           const date = new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-          const typeMap = { 'xray': 'X-Ray', 'mri': 'MRI', 'ecg': 'ECG' };
+          const typeMap = { 'xray': 'X-Ray', 'ecg': 'ECG' };
           const tLabel = typeMap[r.analysis_type] || r.analysis_type;
           
           let confStr = r.confidence ? r.confidence.toFixed(1) + '%' : 'N/A';

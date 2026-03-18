@@ -38,14 +38,6 @@
             </svg>
             <span class="sidebar-label">X-Ray Analysis</span>
           </a></li>
-        <li><a href="mri.html" class="sidebar-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <ellipse cx="12" cy="12" rx="9" ry="10" />
-              <ellipse cx="12" cy="12" rx="5" ry="10" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-            </svg>
-            <span class="sidebar-label">MRI Analysis</span>
-          </a></li>
         <li><a href="ecg.html" class="sidebar-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="2,14 6,14 8,6 12,20 14,10 16,14 22,14" />
@@ -166,7 +158,7 @@ open http://localhost:8080</code></pre>
 
         <h4>Login &amp; Authentication</h4>
         <p>Navigate to the login page and enter your credentials. Upon successful authentication, you'll be redirected
-          to the <strong>Analysis Selector</strong> page where you can choose between X-Ray, MRI, or ECG analysis.
+          to the <strong>Analysis Selector</strong> page where you can choose between X-Ray or ECG analysis.
           Sessions are stored in the browser and expire when you sign out.</p>
 
         <h4>Navigating the Platform</h4>
@@ -187,7 +179,7 @@ open http://localhost:8080</code></pre>
               <td>View aggregate stats: total analyses, weekly count, avg confidence</td>
             </tr>
             <tr>
-              <td><strong>X-Ray / MRI / ECG</strong></td>
+              <td><strong>X-Ray / ECG</strong></td>
               <td>Upload medical images/data and run AI analysis</td>
             </tr>
             <tr>
@@ -203,7 +195,7 @@ open http://localhost:8080</code></pre>
 
         <h4>Uploading Files</h4>
         <ol class="doc-steps">
-          <li>Navigate to the desired analysis page (X-Ray, MRI, or ECG).</li>
+          <li>Navigate to the desired analysis page (X-Ray or ECG).</li>
           <li>Click the upload zone or drag-and-drop your file.</li>
           <li>Wait for the upload and pre-processing to complete.</li>
           <li>The AI model will automatically run and display results.</li>
@@ -238,17 +230,6 @@ open http://localhost:8080</code></pre>
           </tbody>
         </table>
 
-        <h4>MRI Analysis</h4>
-        <table class="doc-table">
-          <tbody>
-            <tr>
-              <td><strong>Model</strong></td>
-              <td>3D U-Net with attention gates</td>
-            </tr>
-            <tr>
-              <td><strong>Supported Regions</strong></td>
-              <td>Brain, spine, knee, shoulder</td>
-            </tr>
             <tr>
               <td><strong>Capabilities</strong></td>
               <td>Tissue segmentation, lesion detection, volumetric measurements</td>
@@ -309,7 +290,7 @@ Content-Type: multipart/form-data
 
 Form fields:
   file      — medical image/data file
-  type      — "xray" | "mri" | "ecg"
+  type      — "xray" | "ecg"
   patient_id — optional patient identifier
 
 → 202 { "job_id": "a1b2c3", "status": "processing" }</code></pre>
@@ -348,6 +329,7 @@ Authorization: Bearer &lt;token&gt;
           <img src="/Diagrams/DFD.svg" alt="Z-Ray Data Flow Diagram" style="width:75%; height:auto; display:block; margin: 0 auto 24px; border: 1.5px solid var(--blue-200); border-radius: var(--radius-sm); cursor: pointer;" />
         </a>
         
+
         <h3>Entity-Relational Diagram</h3>
         <a href="/Diagrams/ER.svg" target="_blank">
           <img src="/Diagrams/ER.svg" alt="Z-Ray Entity-Relational Diagram" style="width:85%; max-width:800px; height:auto; display:block; margin: 0 auto 16px; border: 1.5px solid var(--blue-200); border-radius: var(--radius-sm); cursor: pointer;" />
