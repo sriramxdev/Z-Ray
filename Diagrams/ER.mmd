@@ -1,0 +1,25 @@
+erDiagram
+    %% --- Entities & Attributes ---
+
+    DOCTOR {
+        varchar Username PK "Used for Login"
+        varchar Password "Hashed for Security"
+        varchar Name "Full Name"
+        varchar Address "Clinic/Hospital Address"
+        varchar LIC_No UK "Medical License Number (Unique)"
+    }
+
+    DIAGNOSTIC_HISTORY {
+        uuid ID PK "Unique Scan ID"
+        date Date "Timestamp of Scan"
+        varchar Patient "Patient Name or ID"
+        varchar Type "Scan Modality (X-Ray, ECG, MRI)"
+        varchar Diagnosis "Final Predicted Condition"
+        float Confidence "Percentage (0.00 - 1.00)"
+        varchar Status "e.g., 'Completed', 'Pending Review'"
+        varchar Doctor_Username FK "References DOCTOR"
+    }
+
+    %% --- Relationships ---
+    
+    DOCTOR ||--o{ DIAGNOSTIC_HISTORY : "Conducts & Saves"

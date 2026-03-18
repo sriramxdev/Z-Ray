@@ -171,12 +171,6 @@
           </div>
         </div>
 
-        <!-- AI description -->
-        <div class="results-description">
-          <h4>Clinical Interpretation</h4>
-          <p id="resDescription"></p>
-        </div>
-
         <!-- Flags -->
         <div class="results-flags" id="resultsFlags" style="display:none">
           <div class="flag-banner flag-banner--critical" id="flagCritical" style="display:none">
@@ -188,21 +182,22 @@
             <span id="flagInfoText"></span>
           </div>
         </div>
+
+        <!-- AI description (Moved below the flags, highlighted) -->
+        <div class="results-description" style="margin-top: 24px; padding: 22px; background: #F8FAFC; border-left: 4px solid #1976D2; border-radius: 8px;">
+          <h4 style="color: #0D47A1; font-weight: 700; font-size: 1.15rem; margin-bottom: 12px;">Clinical Interpretation & Reasoning</h4>
+          <p id="resDescription" style="white-space: pre-wrap; margin-top: 0; line-height: 1.7; font-size: 1.05rem; color: #15202B;"></p>
+        </div>
       </div>
 
     </main>
   </div>
 
+  <script src="js/auth.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      /* Auth guard */
-      const user = sessionStorage.getItem('zray_user');
-      if (!user) { window.location.href = 'index.html'; return; }
-      document.getElementById('headerUser').textContent = user;
-      document.getElementById('btnLogout').addEventListener('click', () => {
-        sessionStorage.removeItem('zray_user');
-        window.location.href = 'index.html';
-      });
+      if (!requireAuth()) return;
+      setupHeader();
 
       /* Elements */
       const zone      = document.getElementById('ecgUploadZone');
@@ -256,79 +251,34 @@
         btnAnalyse.disabled = !(selectedFile && filled);
       }
 
-      /* Simulated model results library */
-      const fakeResults = [
-        {
-          diagnosis: 'Atrial Fibrillation (AFib)',
-          confidence: 94.1,
-          severity: 'Moderate',
-          severityClass: 'warning',
-          hr: '112 bpm (irregular)',
-          rhythm: 'Irregularly irregular',
-          pr: 'Absent (no discrete P waves)',
-          qrs: '88 ms (normal)',
-          qt: '360 / 402 ms',
-          axis: 'Normal (62°)',
-          description: 'The ECG demonstrates atrial fibrillation with a controlled ventricular response. No discrete P waves are seen; the baseline shows fibrillatory activity. QRS complexes are narrow, suggesting supraventricular origin. No ST-segment changes or T-wave inversions suggestive of acute ischemia. The patient should be evaluated for anticoagulation therapy and rate/rhythm control.',
-          critical: 'Atrial fibrillation detected — recommend cardiology referral for CHA₂DS₂-VASc scoring and anticoagulation assessment.',
-          info: ''
-        },
-        {
-          diagnosis: 'Normal Sinus Rhythm',
-          confidence: 98.7,
-          severity: 'None',
-          severityClass: 'good',
-          hr: '72 bpm',
-          rhythm: 'Regular sinus rhythm',
-          pr: '168 ms (normal)',
-          qrs: '82 ms (normal)',
-          qt: '380 / 410 ms',
-          axis: 'Normal (45°)',
-          description: 'The ECG shows a normal sinus rhythm with a heart rate of 72 bpm. All intervals are within normal limits. P waves are upright in leads I and II, consistent with sinus origin. No ST-segment elevation or depression. T waves are normal in morphology. No evidence of conduction delay, chamber enlargement, or acute cardiac pathology.',
-          critical: '',
-          info: 'ECG appears within normal limits. No further cardiac workup required at this time.'
-        },
-        {
-          diagnosis: 'ST-Segment Elevation — Possible STEMI',
-          confidence: 91.3,
-          severity: 'Critical',
-          severityClass: 'critical',
-          hr: '98 bpm',
-          rhythm: 'Sinus tachycardia',
-          pr: '152 ms (normal)',
-          qrs: '96 ms (normal)',
-          qt: '340 / 420 ms',
-          axis: 'Left axis deviation (-15°)',
-          description: 'Significant ST elevation observed in leads V1–V4 with reciprocal ST depression in leads II, III, and aVF, consistent with an acute anterior myocardial infarction pattern. QRS complexes remain narrow. Sinus tachycardia at 98 bpm may reflect sympathetic activation. Immediate clinical correlation and emergent cardiac catheterization are strongly recommended.',
-          critical: '🚨 URGENT: ST elevation in V1–V4 suggests acute anterior STEMI. Activate cath lab protocol immediately.',
-          info: ''
-        },
-        {
-          diagnosis: 'Premature Ventricular Contractions (PVCs)',
-          confidence: 89.5,
-          severity: 'Mild',
-          severityClass: 'warning',
-          hr: '78 bpm (with PVCs)',
-          rhythm: 'Sinus with frequent PVCs',
-          pr: '160 ms (normal)',
-          qrs: '142 ms (wide during PVCs)',
-          qt: '370 / 415 ms',
-          axis: 'Normal (58°)',
-          description: 'The underlying rhythm is normal sinus at 78 bpm with frequent unifocal premature ventricular complexes. PVCs show wide, bizarre QRS morphology with a left bundle branch block pattern, suggesting right ventricular origin. The PVC burden appears moderate (~12%). Baseline intervals are within normal limits. Consider Holter monitoring to quantify PVC burden over 24 hours.',
-          critical: '',
-          info: 'PVC burden appears moderate. A 24-hour Holter monitor is recommended to assess total burden and guide management.'
-        }
-      ];
-
       /* Run Analysis */
-      form.addEventListener('submit', e => {
+      form.addEventListener('submit', async e => {
         e.preventDefault();
         btnAnalyse.classList.add('loading');
         btnAnalyse.disabled = true;
         resultsCard.style.display = 'none';
 
-        setTimeout(async () => {
-          const result = fakeResults[Math.floor(Math.random() * fakeResults.length)];
+        try {
+          const formData = new FormData();
+          formData.append('file', selectedFile);
+          formData.append('patient_id', document.getElementById('patientId').value);
+          formData.append('patient_age', document.getElementById('patientAge').value || '50');
+          formData.append('patient_gender', document.getElementById('patientGender').value || 'male');
+
+          const token = getToken();
+          const response = await fetch(`${ZRAY_API}/api/predict/ecg`, {
+            method: 'POST',
+            headers: {
+              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            body: formData
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(result.error || 'Prediction failed');
+          }
 
           /* Save to DB via API */
           try {
@@ -380,7 +330,13 @@
           btnAnalyse.disabled = false;
           resultsCard.style.display = 'block';
           resultsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 1800);
+
+        } catch (error) {
+          console.error("Analysis Error:", error);
+          alert("Error running analysis: " + error.message);
+          btnAnalyse.classList.remove('loading');
+          btnAnalyse.disabled = false;
+        }
       });
     });
   </script>
