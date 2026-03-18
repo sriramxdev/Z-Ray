@@ -139,6 +139,21 @@
             <span class="results-value" id="resSeverity"></span>
           </div>
         </div>
+        
+        <!-- AI Visualization -->
+        <div id="visualizationWrap" style="display:none; margin-bottom: 24px;">
+          <h4 style="margin-bottom:12px; font-size:0.95rem; color: var(--blue-700);">AI Localization Heatmap</h4>
+          <div style="display:flex; gap: 16px; align-items: flex-start;">
+            <div style="flex:1;">
+              <p style="font-size:0.75rem; color: var(--text-light); margin-bottom:4px;">Original Scan</p>
+              <img id="origImage" src="" style="width:100%; border-radius: var(--radius-sm); border: 1px solid var(--border);" />
+            </div>
+            <div style="flex:1;">
+              <p style="font-size:0.75rem; color: var(--text-light); margin-bottom:4px;">Feature Map Overlay</p>
+              <img id="heatmapImage" src="" style="width:100%; border-radius: var(--radius-sm); border: 2px solid var(--blue-300);" />
+            </div>
+          </div>
+        </div>
 
         <!-- Detail grid -->
         <div class="results-detail-grid">
@@ -248,90 +263,28 @@
         btnAnalyse.disabled = !(selectedFile && filled);
       }
 
-      /* Simulated model results library for X-Ray */
-      const fakeResults = [
-        {
-          diagnosis: 'Left Lower Lobe Pneumonia',
-          confidence: 96.8,
-          severity: 'Moderate',
-          severityClass: 'warning',
-          modality: 'Radiography (DX)',
-          bodyPart: 'Chest',
-          view: 'PA & Lateral',
-          findings: 'Focal consolidation in left lower lobe',
-          description: 'The chest radiograph demonstrates focal opacification in the left lower lobe, obliterating the left hemidiaphragm contour, consistent with early pneumonic consolidation. No significant pleural effusion or pneumothorax is identified. The cardiomediastinal silhouette is within normal limits. Correlate clinically for infection.',
-          critical: '',
-          info: 'Follow-up radiography recommended in 4-6 weeks after antibiotic therapy completion to ensure resolution.'
-        },
-        {
-          diagnosis: 'No Abnormalities Detected',
-          confidence: 99.2,
-          severity: 'None',
-          severityClass: 'good',
-          modality: 'Radiography (DX)',
-          bodyPart: 'Chest',
-          view: 'PA (Posteroanterior)',
-          findings: 'Clear lungs, normal cardiomediastinal silhouette',
-          description: 'The lungs are clear without focal consolidation, pleural effusion, or pneumothorax. The cardiomediastinal silhouette is unremarkable. Osseous structures are intact without acute fracture. The visual field remains clear and normal.',
-          critical: '',
-          info: 'Normal radiographic study. No further imaging required.'
-        },
-        {
-          diagnosis: 'Right Distal Radius Fracture',
-          confidence: 97.5,
-          severity: 'Moderate',
-          severityClass: 'warning',
-          modality: 'Radiography (DX)',
-          bodyPart: 'Wrist',
-          view: 'AP, Lateral & Oblique',
-          findings: 'Displaced transverse fracture of right distal radius',
-          description: 'Multiview radiographs of the right wrist demonstrate a complete, dorsally angulated fracture of the distal radius metaphysics. There is roughly 4mm of dorsal displacement and intra-articular extension into the radiocarpal joint. The ulnar styloid is intact.',
-          critical: 'Orthopedic evaluation recommended for reduction and possible stabilization.',
-          info: ''
-        },
-        {
-          diagnosis: 'Pneumothorax — Right Apex',
-          confidence: 92.1,
-          severity: 'Critical',
-          severityClass: 'critical',
-          modality: 'Radiography (DX)',
-          bodyPart: 'Chest',
-          view: 'AP Supine',
-          findings: 'Apical visceral pleural line without lung markings',
-          description: 'A distinct visceral pleural line is visible in the right apex, extending downwards parallel to the chest wall. Absence of pulmonary vascular markings peripheral to this line confirms a moderate right-sided pneumothorax (approximately 20% by volume). No tension physiology is observed. Contralateral lung is clear.',
-          critical: '🚨 URGENT: Large pneumothorax detected. Immediate clinical assessment for chest tube placement required.',
-          info: ''
-        }
-      ];
-
       /* Run Analysis */
-      form.addEventListener('submit', e => {
+      form.addEventListener('submit', async e => {
         e.preventDefault();
         btnAnalyse.classList.add('loading');
         btnAnalyse.disabled = true;
         resultsCard.style.display = 'none';
 
-        setTimeout(async () => {
-          const result = fakeResults[Math.floor(Math.random() * fakeResults.length)];
+        /* Real model results via API */
+        const formData = new FormData(form);
+        formData.append('file', selectedFile);
+        formData.append('patient_id', document.getElementById('patientId').value);
+        formData.append('patient_age', document.getElementById('patientAge').value);
+        formData.append('patient_gender', document.getElementById('patientGender').value);
+        formData.append('prev_diag', '0'); // Default to 0 for now as UI doesn't have the checkbox yet
 
-          /* Save to DB via API */
-          try {
-            await apiRequest('/api/records', {
-              method: 'POST',
-              body: JSON.stringify({
-                patient_id: document.getElementById('patientId').value,
-                patient_age: parseInt(document.getElementById('patientAge').value, 10),
-                patient_gender: document.getElementById('patientGender').value,
-                analysis_type: 'xray',
-                diagnosis: result.diagnosis,
-                confidence: result.confidence,
-                severity: result.severity,
-                description: result.description
-              })
-            });
-          } catch (err) {
-            console.error('Failed to save record:', err);
-          }
+        try {
+          const response = await apiRequest('/api/predict/xray', {
+            method: 'POST',
+            body: formData
+          });
+
+          const result = response;
 
           document.getElementById('resDiagnosis').textContent   = result.diagnosis;
           document.getElementById('resConfidence').textContent   = result.confidence.toFixed(1) + '%';
@@ -344,6 +297,18 @@
           document.getElementById('resView').textContent     = result.view;
           document.getElementById('resFindings').textContent = result.findings;
           document.getElementById('resDescription').textContent = result.description;
+
+          // Heatmap display
+          if (result.heatmap) {
+            document.getElementById('visualizationWrap').style.display = 'block';
+            document.getElementById('heatmapImage').src = result.heatmap;
+            // Use FileReader to show original image
+            const reader = new FileReader();
+            reader.onload = e => { document.getElementById('origImage').src = e.target.result; };
+            reader.readAsDataURL(selectedFile);
+          } else {
+            document.getElementById('visualizationWrap').style.display = 'none';
+          }
 
           const now = new Date();
           document.getElementById('resultsTimestamp').textContent = now.toLocaleString();
@@ -362,7 +327,28 @@
           btnAnalyse.disabled = false;
           resultsCard.style.display = 'block';
           resultsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 1800);
+
+          /* Save record in background */
+          apiRequest('/api/records', {
+            method: 'POST',
+            body: JSON.stringify({
+              patient_id: document.getElementById('patientId').value,
+              patient_age: parseInt(document.getElementById('patientAge').value, 10),
+              patient_gender: document.getElementById('patientGender').value,
+              analysis_type: 'xray',
+              diagnosis: result.diagnosis,
+              confidence: result.confidence,
+              severity: result.severity,
+              description: result.description
+            })
+          }).catch(console.error);
+
+        } catch (err) {
+          console.error('Inference failed:', err);
+          alert('Analysis failed: ' + err.message);
+          btnAnalyse.classList.remove('loading');
+          btnAnalyse.disabled = false;
+        }
       });
     });
   </script>

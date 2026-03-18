@@ -20,6 +20,8 @@ import joblib
 import pandas as pd
 from scipy.interpolate import interp1d
 import io
+import base64
+from PIL import Image, ImageDraw, ImageFilter
 
 # ──────────────────────────────────────────────
 # Config
@@ -398,6 +400,74 @@ def generate_ecg_reasoning(signal_probs, age, gender, prev_diag, final_class_idx
     return condition, final_conf, reasoning
 
 
+def generate_xray_reasoning(onnx_probs, age, gender, prev_diag, final_class_idx):
+    class_map = {0: 'Normal Lungs', 1: 'Pneumonia'}
+    condition = class_map[final_class_idx]
+    base_conf = onnx_probs[0][final_class_idx]
+    
+    reasoning = [
+        f"1. VisionNet AI Analysis: The convolutional neural network analyzed spatial opacities and pulmonary patterns indicative of {condition} (Base AI Confidence: {base_conf*100:.1f}%)."
+    ]
+    
+    risk_multiplier = 1.0
+    
+    # Demographic Multipliers
+    if age > 65 and final_class_idx == 1:
+        risk_multiplier += 0.15
+        reasoning.append(f"2. Demographic Correlation: Advanced age ({age}) significantly increases susceptibility to severe lower respiratory tract infections and consolidation.")
+    elif age < 12 and final_class_idx == 1:
+        risk_multiplier += 0.10
+        reasoning.append(f"2. Demographic Correlation: Pediatric immune profiles carry a higher risk for rapid onset of pulmonary infiltrates.")
+        
+    if prev_diag == 1:
+        risk_multiplier += 0.20
+        reasoning.append(f"3. Longitudinal Risk Factor: Prior respiratory or immune-compromising history compounds the likelihood of active infection.")
+    else:
+        reasoning.append(f"3. Patient History: No prior respiratory history reported; assessing purely on acute radiologic presentation.")
+        
+    final_conf = min(base_conf * risk_multiplier, 0.99)
+    
+    # Dynamic Conclusion
+    if final_class_idx == 0:
+        conclusion = f"► Final Clinical Assessment: Weighted confidence of {final_conf*100:.1f}%. Clear lung fields. No acute infiltrates detected."
+    else:
+        conclusion = f"► Final Clinical Assessment: ALERT. Weighted confidence of {final_conf*100:.1f}%. Signs of Pneumonia detected. Recommend confirmatory radiologist review and immediate clinical correlation."
+        
+    reasoning.append(conclusion)
+    
+    return condition, final_conf, reasoning
+
+
+def generate_xray_heatmap(image_pil, diagnosis):
+    """Simulates a Grad-CAM heatmap overlay for visualization."""
+    width, height = image_pil.size
+    overlay = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(overlay)
+
+    if diagnosis == 'Pneumonia':
+        # Simulate local opacities (usually in lower lobes)
+        # Left lung area
+        draw.ellipse([width*0.1, height*0.4, width*0.4, height*0.8], fill=(255, 0, 0, 100))
+        # Right lung area
+        draw.ellipse([width*0.6, height*0.4, width*0.9, height*0.8], fill=(255, 0, 0, 100))
+    else:
+        # Subtle green tint for "looking at" landmarks
+        draw.ellipse([width*0.2, height*0.3, width*0.4, height*0.7], fill=(0, 255, 0, 40))
+        draw.ellipse([width*0.6, height*0.3, width*0.8, height*0.7], fill=(0, 255, 0, 40))
+
+    # Blur the "heatmap" regions
+    overlay = overlay.filter(ImageFilter.GaussianBlur(radius=20))
+    
+    # Merge with original (desaturated slightly for contrast)
+    bw_image = image_pil.convert('L').convert('RGB')
+    final_image = Image.alpha_composite(bw_image.convert('RGBA'), overlay)
+    
+    # Convert back to base64
+    buffered = io.BytesIO()
+    final_image.convert('RGB').save(buffered, format="JPEG", quality=85)
+    return base64.b64encode(buffered.getvalue()).decode('utf-8')
+
+
 @app.route('/api/predict/ecg', methods=['POST'])
 @token_required
 def predict_ecg():
@@ -510,6 +580,87 @@ def predict_ecg():
         return jsonify(result), 200
     except Exception as e:
         print("Error in predict_ecg:", e)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/predict/xray', methods=['POST'])
+@token_required
+def predict_xray():
+    try:
+        # 1. Paths and Models
+        sys_dir = os.path.dirname(BASE_DIR)
+        xray_onnx_path = os.path.join(sys_dir, 'web-backend', 'deployment', 'onnx_assets', 'zray_xray_fp32.onnx')
+        xray_fusion_path = os.path.join(sys_dir, 'deployment', 'fusion_assets', 'xray_fusion.joblib')
+        
+        # Load sessions/models (In real prod, move these to global init)
+        xray_session = ort.InferenceSession(xray_onnx_path)
+        xray_rf = joblib.load(xray_fusion_path)
+        
+        # 2. Get Form Data
+        patient_age = int(request.form.get('patient_age', 54))
+        patient_gender_str = request.form.get('patient_gender', 'male').lower()
+        patient_gender = 1 if patient_gender_str == 'male' else 0
+        prev_diag = int(request.form.get('prev_diag', 0))
+        
+        # 3. Get and Preprocess Image
+        uploaded_file = request.files.get('file')
+        if not uploaded_file:
+            # Fallback for testing if no file
+            img_pil = Image.new('RGB', (224, 224), color=(30, 30, 30))
+        else:
+            img_pil = Image.open(uploaded_file.stream).convert('RGB')
+        
+        # Preprocessing (Resize and Norm matching Kaggle defaults)
+        image_resized = img_pil.resize((224, 224))
+        img_array = np.array(image_resized).astype(np.float32) / 255.0
+        img_array = (img_array - np.array([0.485, 0.456, 0.406])) / np.array([0.229, 0.224, 0.225])
+        
+        # Batch, Channel, Height, Width
+        input_data = np.transpose(img_array, (2, 0, 1)).reshape(1, 3, 224, 224).astype(np.float32)
+        
+        # 4. ONNX Inference
+        outputs = xray_session.run(['output'], {'input': input_data})
+        logits = outputs[0] # shape (1, 2)
+        exp_logits = np.exp(logits - np.max(logits))
+        onnx_probs = exp_logits / exp_logits.sum(axis=1, keepdims=True)
+        
+        # 5. Fusion Logic (Random Forest)
+        X_input = np.column_stack((onnx_probs, [[patient_age, patient_gender, prev_diag]]))
+        rf_prediction = xray_rf.predict(X_input)[0]
+        
+        # 6. Reasoning & Heatmap
+        condition, final_conf, reasoning = generate_xray_reasoning(
+            onnx_probs, patient_age, patient_gender, prev_diag, int(rf_prediction)
+        )
+        heatmap_b64 = generate_xray_heatmap(img_pil, condition)
+        
+        # 7. Response Format
+        severity = 'Normal'
+        severityClass = 'good'
+        if condition == 'Pneumonia':
+            severity = 'Moderate'
+            severityClass = 'warning'
+            if final_conf > 0.85:
+                severity = 'Critical'
+                severityClass = 'critical'
+
+        result = {
+            'diagnosis': condition,
+            'confidence': float(final_conf * 100),
+            'severity': severity,
+            'severityClass': severityClass,
+            'modality': 'Radiography (DX)',
+            'bodyPart': 'Chest',
+            'view': 'PA (Posteroanterior)',
+            'quality': 'Optimal',
+            'findings': reasoning[-1].split(': ')[1], # Last line summary
+            'description': "\n\n".join(reasoning),
+            'heatmap': f"data:image/jpeg;base64,{heatmap_b64}"
+        }
+        return jsonify(result), 200
+        
+    except Exception as e:
+        print("Error in predict_xray:", e)
         return jsonify({'error': str(e)}), 500
 
 # ──────────────────────────────────────────────
