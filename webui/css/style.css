@@ -674,10 +674,10 @@ body {
 }
 
 .content-card h3 {
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--blue-700);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .content-card p {
@@ -796,10 +796,10 @@ body {
 }
 
 .content-card h4 {
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--text);
-  margin: 18px 0 8px;
+  margin: 20px 0 10px;
 }
 
 .content-card h4:first-of-type {
