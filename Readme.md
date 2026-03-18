@@ -90,11 +90,14 @@ As a project designed for real-world utility on constrained devices (like a **Re
 
 ```text
 Z-Ray/
-├── models/
-│   ├── xray/          # MobileNetV3 + Grad-CAM Logic
-│   ├── ecg/           # 1D-ResNet Signal Processor
-│   └── mri/           # 2.5D Stacking + Fusion Engine
-├── deployment/
-│   └── onnx_assets/   # INT8 Quantized Production Models
-├── web-backend/       # FastAPI Gateway (Unified Inference API)
-└── web-frontend/      # Vite + React Dashboard (Zeta-UI)
+├── Diagrams/          # SVG/PNG System Architecture Diagrams
+├── Notebooks/         # Model Training & Exploratory Notebooks
+├── web-backend/       # Core Inference Assets
+│   └── deployment/
+│       ├── onnx_assets/       # Quantized INT8/FP32 Models
+│       └── fusion_assets/     # RF Fusion & Signal Weights
+└── webui/             # Unified Dashboard & API Gateway
+    ├── server.py              # Flask API & Diagnostic Server
+    ├── *.html                 # Multimodal Analysis UI Modules
+    └── Diagrams/              # Local Diagram Cache for Portal
+```
