@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Z-Ray | Documentation</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="dashboard-header">
+    <a href="dashboard.html" class="brand"><span class="dot"></span> Z-Ray</a>
+    <div class="header-right">
+      <span class="header-user" id="headerUser"></span>
+      <button class="btn-logout" id="btnLogout">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <nav class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="dashboard.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span class="sidebar-label">Dashboard</span>
+        </a></li>
+        <li><a href="xray.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M9 16h6"/></svg>
+          <span class="sidebar-label">X-Ray Analysis</span>
+        </a></li>
+        <li><a href="mri.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="12" rx="9" ry="10"/><ellipse cx="12" cy="12" rx="5" ry="10"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+          <span class="sidebar-label">MRI Analysis</span>
+        </a></li>
+        <li><a href="ecg.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2,14 6,14 8,6 12,20 14,10 16,14 22,14"/></svg>
+          <span class="sidebar-label">ECG Analysis</span>
+        </a></li>
+      </ul>
+      <ul class="sidebar-nav sidebar-bottom">
+        <li><a href="history.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+          <span class="sidebar-label">History</span>
+        </a></li>
+        <li><a href="about.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span class="sidebar-label">About</span>
+        </a></li>
+        <li><a href="documentation.html" class="sidebar-link active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          <span class="sidebar-label">Documentation</span>
+        </a></li>
+      </ul>
+    </nav>
+
+    <main class="page-content">
+      <h1 class="page-title">Documentation</h1>
+      <p class="page-subtitle">Technical reference and user guide for the Z-Ray Medical Platform.</p>
+
+      <!-- ===== Table of Contents ===== -->
+      <div class="content-card">
+        <h3>📋 Table of Contents</h3>
+        <ul class="doc-toc">
+          <li><a href="#getting-started">1. Getting Started</a></li>
+          <li><a href="#user-guide">2. User Guide</a></li>
+          <li><a href="#analysis-modules">3. Analysis Modules</a></li>
+          <li><a href="#api-reference">4. API Reference</a></li>
+          <li><a href="#architecture">5. System Architecture</a></li>
+          <li><a href="#data-formats">6. Supported Data Formats</a></li>
+          <li><a href="#troubleshooting">7. Troubleshooting</a></li>
+        </ul>
+      </div>
+
+      <!-- ===== 1. Getting Started ===== -->
+      <div class="content-card" id="getting-started" style="animation-delay:0.05s">
+        <h3>1. Getting Started</h3>
+        <h4>System Requirements</h4>
+        <table class="doc-table">
+          <tbody>
+            <tr><td><strong>Browser</strong></td><td>Chrome 90+, Firefox 88+, Edge 90+, Brave 1.25+</td></tr>
+            <tr><td><strong>Backend</strong></td><td>Python 3.9+, PyTorch 2.0+, CUDA 11.8 (optional, for GPU)</td></tr>
+            <tr><td><strong>Memory</strong></td><td>8 GB RAM minimum, 16 GB recommended</td></tr>
+            <tr><td><strong>Storage</strong></td><td>2 GB for models, additional space for patient data</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Quick Start</h4>
+        <div class="doc-code">
+          <pre><code># Clone the repository
+git clone https://github.com/zray-medical/zray-platform.git
+cd zray-platform
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Download pre-trained models
+python scripts/download_models.py
+
+# Start the backend server
+python manage.py runserver
+
+# Open the web UI
+open http://localhost:8080</code></pre>
+        </div>
+
+        <h4>Default Credentials</h4>
+        <table class="doc-table">
+          <tbody>
+            <tr><td><strong>Username</strong></td><td><code>admin</code></td></tr>
+            <tr><td><strong>Password</strong></td><td><code>admin</code></td></tr>
+          </tbody>
+        </table>
+        <p class="doc-warning">⚠️ Change default credentials immediately after first login in a production environment.</p>
+      </div>
+
+      <!-- ===== 2. User Guide ===== -->
+      <div class="content-card" id="user-guide" style="animation-delay:0.1s">
+        <h3>2. User Guide</h3>
+
+        <h4>Login &amp; Authentication</h4>
+        <p>Navigate to the login page and enter your credentials. Upon successful authentication, you'll be redirected to the <strong>Analysis Selector</strong> page where you can choose between X-Ray, MRI, or ECG analysis. Sessions are stored in the browser and expire when you sign out.</p>
+
+        <h4>Navigating the Platform</h4>
+        <table class="doc-table">
+          <thead><tr><th>Page</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Selector</strong></td><td>Choose analysis type from card-based overview</td></tr>
+            <tr><td><strong>Dashboard</strong></td><td>View aggregate stats: total analyses, weekly count, avg confidence</td></tr>
+            <tr><td><strong>X-Ray / MRI / ECG</strong></td><td>Upload medical images/data and run AI analysis</td></tr>
+            <tr><td><strong>History</strong></td><td>Browse all past analysis records with filters</td></tr>
+            <tr><td><strong>About</strong></td><td>Platform info, version, and contact details</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Uploading Files</h4>
+        <ol class="doc-steps">
+          <li>Navigate to the desired analysis page (X-Ray, MRI, or ECG).</li>
+          <li>Click the upload zone or drag-and-drop your file.</li>
+          <li>Wait for the upload and pre-processing to complete.</li>
+          <li>The AI model will automatically run and display results.</li>
+          <li>Review the diagnosis, confidence score, and annotated output.</li>
+          <li>Results are saved to History for future reference.</li>
+        </ol>
+      </div>
+
+      <!-- ===== 3. Analysis Modules ===== -->
+      <div class="content-card" id="analysis-modules" style="animation-delay:0.15s">
+        <h3>3. Analysis Modules</h3>
+
+        <h4>X-Ray Analysis</h4>
+        <table class="doc-table">
+          <tbody>
+            <tr><td><strong>Model</strong></td><td>ResNet-50 + Feature Pyramid Network</td></tr>
+            <tr><td><strong>Training Data</strong></td><td>200,000+ annotated radiographs (CheXpert, MIMIC-CXR)</td></tr>
+            <tr><td><strong>Detections</strong></td><td>Fractures, pneumonia, pleural effusion, cardiomegaly, nodules</td></tr>
+            <tr><td><strong>Output</strong></td><td>Heatmap overlay, bounding boxes, confidence scores</td></tr>
+          </tbody>
+        </table>
+
+        <h4>MRI Analysis</h4>
+        <table class="doc-table">
+          <tbody>
+            <tr><td><strong>Model</strong></td><td>3D U-Net with attention gates</td></tr>
+            <tr><td><strong>Supported Regions</strong></td><td>Brain, spine, knee, shoulder</td></tr>
+            <tr><td><strong>Capabilities</strong></td><td>Tissue segmentation, lesion detection, volumetric measurements</td></tr>
+            <tr><td><strong>Output</strong></td><td>Segmentation masks, annotated slices, measurement report</td></tr>
+          </tbody>
+        </table>
+
+        <h4>ECG Analysis</h4>
+        <table class="doc-table">
+          <tbody>
+            <tr><td><strong>Model</strong></td><td>1D CNN-LSTM hybrid classifier</td></tr>
+            <tr><td><strong>Input</strong></td><td>Standard 12-lead ECG (10-second strips)</td></tr>
+            <tr><td><strong>Classifications</strong></td><td>AFib, VTach, bradycardia, ST elevation, PVCs, normal sinus</td></tr>
+            <tr><td><strong>Output</strong></td><td>Beat-by-beat annotation, rhythm classification, critical flags</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ===== 4. API Reference ===== -->
+      <div class="content-card" id="api-reference" style="animation-delay:0.2s">
+        <h3>4. API Reference</h3>
+        <p>The Z-Ray backend exposes RESTful endpoints for programmatic access.</p>
+
+        <h4>Authentication</h4>
+        <div class="doc-code">
+          <pre><code>POST /api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+→ 200 { "token": "eyJhbG...", "expires_in": 3600 }</code></pre>
+        </div>
+
+        <h4>Submit Analysis</h4>
+        <div class="doc-code">
+          <pre><code>POST /api/v1/analysis
+Authorization: Bearer &lt;token&gt;
+Content-Type: multipart/form-data
+
+Form fields:
+  file      — medical image/data file
+  type      — "xray" | "mri" | "ecg"
+  patient_id — optional patient identifier
+
+→ 202 { "job_id": "a1b2c3", "status": "processing" }</code></pre>
+        </div>
+
+        <h4>Get Results</h4>
+        <div class="doc-code">
+          <pre><code>GET /api/v1/analysis/{job_id}
+Authorization: Bearer &lt;token&gt;
+
+→ 200 {
+  "job_id": "a1b2c3",
+  "status": "completed",
+  "diagnosis": "Right distal radius fracture",
+  "confidence": 0.963,
+  "annotations": [ ... ],
+  "created_at": "2026-03-16T14:23:00Z"
+}</code></pre>
+        </div>
+
+        <h4>List History</h4>
+        <div class="doc-code">
+          <pre><code>GET /api/v1/analysis?limit=50&offset=0
+Authorization: Bearer &lt;token&gt;
+
+→ 200 { "total": 142, "results": [ ... ] }</code></pre>
+        </div>
+      </div>
+
+      <!-- ===== 5. Architecture ===== -->
+      <div class="content-card" id="architecture" style="animation-delay:0.25s">
+        <h3>5. System Architecture</h3>
+        <div class="doc-code">
+          <pre><code>┌─────────────────────────────────────────────────┐
+│                   Web Browser                   │
+│         (HTML / CSS / JavaScript UI)            │
+└──────────────────┬──────────────────────────────┘
+                   │  HTTP / REST
+┌──────────────────▼──────────────────────────────┐
+│              API Gateway (Flask)                 │
+│   • Authentication   • Rate limiting            │
+│   • Request routing  • Response formatting      │
+└──────────┬─────────────────┬────────────────────┘
+           │                 │
+┌──────────▼──────┐  ┌──────▼──────────────────┐
+│  Model Service  │  │   Database (PostgreSQL)  │
+│  • X-Ray model  │  │   • Users & sessions     │
+│  • MRI  model   │  │   • Analysis records     │
+│  • ECG  model   │  │   • Audit logs           │
+│  (PyTorch)      │  └──────────────────────────┘
+└─────────────────┘
+           │
+┌──────────▼──────┐
+│   File Storage  │
+│  • DICOM files  │
+│  • Result images│
+│  • Reports      │
+└─────────────────┘</code></pre>
+        </div>
+        <p>All inference runs locally — no patient data leaves your network. GPU acceleration is optional but recommended for throughput above 50 analyses per day.</p>
+      </div>
+
+      <!-- ===== 6. Data Formats ===== -->
+      <div class="content-card" id="data-formats" style="animation-delay:0.3s">
+        <h3>6. Supported Data Formats</h3>
+        <table class="doc-table">
+          <thead><tr><th>Module</th><th>Formats</th><th>Max Size</th></tr></thead>
+          <tbody>
+            <tr><td><strong>X-Ray</strong></td><td>DICOM (.dcm), PNG, JPEG</td><td>50 MB</td></tr>
+            <tr><td><strong>MRI</strong></td><td>DICOM (.dcm), NIfTI (.nii, .nii.gz), PNG</td><td>100 MB</td></tr>
+            <tr><td><strong>ECG</strong></td><td>PDF, CSV, EDF, HL7 aECG (XML)</td><td>20 MB</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ===== 7. Troubleshooting ===== -->
+      <div class="content-card" id="troubleshooting" style="animation-delay:0.35s">
+        <h3>7. Troubleshooting</h3>
+        <table class="doc-table">
+          <thead><tr><th>Issue</th><th>Solution</th></tr></thead>
+          <tbody>
+            <tr><td>Login fails with correct credentials</td><td>Clear browser cache and cookies, then retry</td></tr>
+            <tr><td>Upload timeout on large files</td><td>Ensure file is within size limits; check network connection</td></tr>
+            <tr><td>"Model not loaded" error</td><td>Run <code>python scripts/download_models.py</code> to re-download weights</td></tr>
+            <tr><td>Low confidence scores</td><td>Ensure uploaded images meet quality standards (resolution, contrast)</td></tr>
+            <tr><td>Dashboard shows stale data</td><td>Hard-refresh the browser (Ctrl+Shift+R)</td></tr>
+            <tr><td>GPU not detected</td><td>Verify CUDA 11.8+ is installed: <code>nvidia-smi</code></td></tr>
+          </tbody>
+        </table>
+        <p>For additional support, contact <strong>support@zray-medical.com</strong> or open an issue on the project repository.</p>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", () => { if (requireAuth()) setupHeader(); });</script>
+</body>
+</html>
