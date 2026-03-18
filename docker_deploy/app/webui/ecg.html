@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Z-Ray | ECG Analysis</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="dashboard-header">
+    <a href="dashboard.html" class="brand"><span class="dot"></span> Z-Ray</a>
+    <div class="header-right">
+      <span class="header-user" id="headerUser"></span>
+      <button class="btn-logout" id="btnLogout">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <nav class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="dashboard.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span class="sidebar-label">Dashboard</span>
+        </a></li>
+        <li><a href="xray.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M9 16h6"/></svg>
+          <span class="sidebar-label">X-Ray Analysis</span>
+        </a></li>
+        <li><a href="ecg.html" class="sidebar-link active">
+        <li><a href="ecg.html" class="sidebar-link active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2,14 6,14 8,6 12,20 14,10 16,14 22,14"/></svg>
+          <span class="sidebar-label">ECG Analysis</span>
+        </a></li>
+      </ul>
+      <ul class="sidebar-nav sidebar-bottom">
+        <li><a href="history.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+          <span class="sidebar-label">History</span>
+        </a></li>
+        <li><a href="about.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span class="sidebar-label">About</span>
+        </a></li>
+        <li><a href="documentation.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          <span class="sidebar-label">Documentation</span>
+        </a></li>
+      </ul>
+    </nav>
+
+    <main class="page-content">
+      <h1 class="page-title">ECG Analysis</h1>
+      <p class="page-subtitle">Upload a 12-lead ECG recording and enter patient details to begin analysis.</p>
+
+      <!-- ===== Top Row: Upload + Patient Data (side by side) ===== -->
+      <div class="ecg-input-grid">
+
+        <!-- Left: File Upload -->
+        <div class="content-card">
+          <h3>Upload ECG Data</h3>
+          <div class="upload-zone" id="ecgUploadZone">
+            <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M24 32V16M16 22l8-8 8 8"/>
+              <rect x="6" y="6" width="36" height="36" rx="4"/>
+            </svg>
+            <p><span class="upload-cta">Click to upload</span> or drag and drop</p>
+            <p>Supports PDF, CSV, EDF, XML — Max 20 MB</p>
+          </div>
+          <input type="file" id="ecgFileInput" accept=".pdf,.csv,.edf,.xml" hidden />
+          <div class="file-info" id="fileInfo" style="display:none">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2h8l4 4v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><polyline points="12,2 12,6 16,6"/></svg>
+            <span id="fileName"></span>
+            <button type="button" class="file-remove" id="fileRemove" title="Remove file">✕</button>
+          </div>
+        </div>
+
+        <!-- Right: Patient Data -->
+        <div class="content-card">
+          <h3>Patient Information</h3>
+          <form id="patientForm" autocomplete="off">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="patientId">Patient ID</label>
+                <input type="text" id="patientId" placeholder="e.g. PT-20500" />
+              </div>
+              <div class="form-group">
+                <label for="patientAge">Age</label>
+                <input type="number" id="patientAge" placeholder="e.g. 54" min="0" max="150" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="patientGender">Gender</label>
+                <select id="patientGender">
+                  <option value="" disabled selected>Select</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="patientWeight">Weight (kg)</label>
+                <input type="number" id="patientWeight" placeholder="e.g. 72" min="0" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="clinicalNotes">Clinical Notes (optional)</label>
+              <textarea id="clinicalNotes" rows="3" placeholder="Pre-existing conditions, symptoms, medication…"></textarea>
+            </div>
+            <button type="submit" class="btn-analyse" id="btnAnalyse" disabled>
+              <span class="btn-text">Run Analysis</span>
+              <span class="spinner"></span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- ===== Output: Analysis Results ===== -->
+      <div class="content-card ecg-results-card" id="resultsCard" style="display:none">
+        <div class="results-header">
+          <h3>Analysis Results</h3>
+          <span class="results-timestamp" id="resultsTimestamp"></span>
+        </div>
+
+        <!-- Summary bar -->
+        <div class="results-summary" id="resultsSummary">
+          <div class="results-diagnosis">
+            <span class="results-label">Diagnosis</span>
+            <span class="results-value" id="resDiagnosis"></span>
+          </div>
+          <div class="results-confidence">
+            <span class="results-label">Confidence</span>
+            <span class="results-value results-value--green" id="resConfidence"></span>
+          </div>
+          <div class="results-severity" id="resSeverityWrap">
+            <span class="results-label">Severity</span>
+            <span class="results-value" id="resSeverity"></span>
+          </div>
+        </div>
+
+        <!-- Detail grid -->
+        <div class="results-detail-grid">
+          <div class="result-detail-item">
+            <span class="detail-label">Heart Rate</span>
+            <span class="detail-value" id="resHR"></span>
+          </div>
+          <div class="result-detail-item">
+            <span class="detail-label">Rhythm</span>
+            <span class="detail-value" id="resRhythm"></span>
+          </div>
+          <div class="result-detail-item">
+            <span class="detail-label">PR Interval</span>
+            <span class="detail-value" id="resPR"></span>
+          </div>
+          <div class="result-detail-item">
+            <span class="detail-label">QRS Duration</span>
+            <span class="detail-value" id="resQRS"></span>
+          </div>
+          <div class="result-detail-item">
+            <span class="detail-label">QT / QTc</span>
+            <span class="detail-value" id="resQT"></span>
+          </div>
+          <div class="result-detail-item">
+            <span class="detail-label">Axis</span>
+            <span class="detail-value" id="resAxis"></span>
+          </div>
+        </div>
+
+        <!-- Flags -->
+        <div class="results-flags" id="resultsFlags" style="display:none">
+          <div class="flag-banner flag-banner--critical" id="flagCritical" style="display:none">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2L1 18h18L10 2zM10 8v4M10 14h.01"/></svg>
+            <span id="flagCriticalText"></span>
+          </div>
+          <div class="flag-banner flag-banner--info" id="flagInfo" style="display:none">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="8"/><line x1="10" y1="14" x2="10" y2="10"/><line x1="10" y1="6" x2="10.01" y2="6"/></svg>
+            <span id="flagInfoText"></span>
+          </div>
+        </div>
+
+        <!-- AI description (Moved below the flags, highlighted) -->
+        <div class="results-description" style="margin-top: 24px; padding: 22px; background: #F8FAFC; border-left: 4px solid #1976D2; border-radius: 8px;">
+          <h4 style="color: #0D47A1; font-weight: 700; font-size: 1.15rem; margin-bottom: 12px;">Clinical Interpretation & Reasoning</h4>
+          <p id="resDescription" style="white-space: pre-wrap; margin-top: 0; line-height: 1.7; font-size: 1.05rem; color: #15202B;"></p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!requireAuth()) return;
+      setupHeader();
+
+      /* Elements */
+      const zone      = document.getElementById('ecgUploadZone');
+      const fileInput  = document.getElementById('ecgFileInput');
+      const fileInfo   = document.getElementById('fileInfo');
+      const fileName   = document.getElementById('fileName');
+      const fileRemove = document.getElementById('fileRemove');
+      const form       = document.getElementById('patientForm');
+      const btnAnalyse = document.getElementById('btnAnalyse');
+      const resultsCard= document.getElementById('resultsCard');
+
+      let selectedFile = null;
+
+      /* Upload zone click */
+      zone.addEventListener('click', () => fileInput.click());
+
+      /* Drag & Drop */
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+      zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.classList.remove('drag-over');
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+      });
+
+      fileInput.addEventListener('change', () => { if (fileInput.files.length) handleFile(fileInput.files[0]); });
+
+      function handleFile(file) {
+        selectedFile = file;
+        fileName.textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+        fileInfo.style.display = 'flex';
+        zone.style.display = 'none';
+        updateBtn();
+      }
+
+      fileRemove.addEventListener('click', () => {
+        selectedFile = null;
+        fileInput.value = '';
+        fileInfo.style.display = 'none';
+        zone.style.display = 'flex';
+        updateBtn();
+      });
+
+      /* Enable button when file + required fields filled */
+      const reqFields = [document.getElementById('patientId'), document.getElementById('patientAge'), document.getElementById('patientGender')];
+      reqFields.forEach(f => f.addEventListener('input', updateBtn));
+      reqFields.forEach(f => f.addEventListener('change', updateBtn));
+
+      function updateBtn() {
+        const filled = reqFields.every(f => f.value.trim() !== '');
+        btnAnalyse.disabled = !(selectedFile && filled);
+      }
+
+      /* Run Analysis */
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        btnAnalyse.classList.add('loading');
+        btnAnalyse.disabled = true;
+        resultsCard.style.display = 'none';
+
+        try {
+          const formData = new FormData();
+          formData.append('file', selectedFile);
+          formData.append('patient_id', document.getElementById('patientId').value);
+          formData.append('patient_age', document.getElementById('patientAge').value || '50');
+          formData.append('patient_gender', document.getElementById('patientGender').value || 'male');
+
+          const token = getToken();
+          const response = await fetch(`${ZRAY_API}/api/predict/ecg`, {
+            method: 'POST',
+            headers: {
+              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            body: formData
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(result.error || 'Prediction failed');
+          }
+
+          /* Save to DB via API */
+          try {
+            await apiRequest('/api/records', {
+              method: 'POST',
+              body: JSON.stringify({
+                patient_id: document.getElementById('patientId').value,
+                patient_age: parseInt(document.getElementById('patientAge').value, 10),
+                patient_gender: document.getElementById('patientGender').value,
+                analysis_type: 'ecg',
+                diagnosis: result.diagnosis,
+                confidence: result.confidence,
+                severity: result.severity,
+                description: result.description
+              })
+            });
+          } catch (err) {
+            console.error('Failed to save record:', err);
+          }
+
+          document.getElementById('resDiagnosis').textContent   = result.diagnosis;
+          document.getElementById('resConfidence').textContent   = result.confidence.toFixed(1) + '%';
+          const sevEl = document.getElementById('resSeverity');
+          sevEl.textContent = result.severity;
+          sevEl.className = 'results-value severity-' + result.severityClass;
+
+          document.getElementById('resHR').textContent     = result.hr;
+          document.getElementById('resRhythm').textContent = result.rhythm;
+          document.getElementById('resPR').textContent     = result.pr;
+          document.getElementById('resQRS').textContent    = result.qrs;
+          document.getElementById('resQT').textContent     = result.qt;
+          document.getElementById('resAxis').textContent   = result.axis;
+          document.getElementById('resDescription').textContent = result.description;
+
+          const now = new Date();
+          document.getElementById('resultsTimestamp').textContent = now.toLocaleString();
+
+          /* Flags */
+          const flagsWrap = document.getElementById('resultsFlags');
+          const flagC = document.getElementById('flagCritical');
+          const flagI = document.getElementById('flagInfo');
+          flagC.style.display = result.critical ? 'flex' : 'none';
+          flagI.style.display = result.info ? 'flex' : 'none';
+          if (result.critical) document.getElementById('flagCriticalText').textContent = result.critical;
+          if (result.info) document.getElementById('flagInfoText').textContent = result.info;
+          flagsWrap.style.display = (result.critical || result.info) ? 'block' : 'none';
+
+          btnAnalyse.classList.remove('loading');
+          btnAnalyse.disabled = false;
+          resultsCard.style.display = 'block';
+          resultsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        } catch (error) {
+          console.error("Analysis Error:", error);
+          alert("Error running analysis: " + error.message);
+          btnAnalyse.classList.remove('loading');
+          btnAnalyse.disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

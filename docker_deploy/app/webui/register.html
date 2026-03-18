@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Z-Ray Medical Imaging Platform — Secure Registration" />
+  <title>Z-Ray | Register</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===== Header ===== -->
+  <header class="site-header">
+    <a href="index.html" class="brand" id="siteBrand">
+      <span class="dot"></span>
+      Z-Ray
+    </a>
+  </header>
+
+  <!-- ===== Registration Page ===== -->
+  <main class="login-page">
+    <div class="login-card" id="registerCard" style="max-width: 500px">
+
+      <h1 class="login-card__title">Create an Account</h1>
+      <p class="login-card__subtitle">Join the Z-Ray Medical Platform</p>
+
+      <!-- Error message -->
+      <div class="error-message" id="errorMessage" role="alert" style="display:none; align-items:center;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="margin-right:8px;">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span id="errorText"></span>
+      </div>
+
+      <form id="registerForm" autocomplete="off">
+
+        <!-- Full Name -->
+        <div class="form-group">
+          <label for="fullName">Full Name / Dr. Name</label>
+          <input type="text" id="fullName" placeholder="e.g. Dr. Jane Fox" required spellcheck="false" />
+        </div>
+
+        <!-- Username / Email -->
+        <div class="form-group">
+          <label for="username">Username or Email</label>
+          <input type="text" id="username" placeholder="e.g. jane.fox@hospital.org" required spellcheck="false" />
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="password" placeholder="Create a secure password" required />
+          </div>
+        </div>
+
+        <!-- Hospital / Clinic Address -->
+        <div class="form-group">
+          <label for="address">Hospital / Clinic Address</label>
+          <input type="text" id="address" placeholder="e.g. 120 Health Ave, Suite 300" required />
+        </div>
+
+        <!-- Medical License No. -->
+        <div class="form-group">
+          <label for="licenseNo">Doctor's License No.</label>
+          <input type="text" id="licenseNo" placeholder="e.g. MED-56789-Z" required />
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-login" id="btnRegister" style="margin-top:20px;">
+          <span class="btn-text">Register Account</span>
+          <span class="spinner"></span>
+        </button>
+
+      </form>
+
+      <div class="login-links" style="text-align:center; margin-top:20px; font-size:14px;">
+        <p>Already have an account? <a href="index.html" style="color:var(--primary-color); text-decoration:none; font-weight:500;">Sign in here</a></p>
+      </div>
+
+      <p class="login-footer" style="margin-top:16px;">© 2026 Z-Ray Medical Platform</p>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script src="js/register.js"></script>
+</body>
+</html>
