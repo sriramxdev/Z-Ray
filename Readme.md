@@ -74,7 +74,7 @@ python server.py
 ## 📊 Performance & Optimization
 
 
-As a project designed for real-world utility on constrained devices (like a **Redmi Note 7 Pro**), Z-Ray employs advanced optimization techniques:
+As a project designed for real-world utility on constrained devices, Z-Ray employs advanced optimization techniques:
 
 * **INT8 Quantization:** Models are compressed from FP32 to INT8, reducing file sizes by ~75% while maintaining >98% of original accuracy.
 * **ONNX Runtime:** Unified cross-platform inference that allows the backend to run on non-dGPU hardware (Ryzen 5 6600H) with millisecond latency.
@@ -97,3 +97,5 @@ Z-Ray/
     ├── *.html                 # Multimodal Analysis UI Modules
     └── Diagrams/              # Local Diagram Cache for Portal
 ```
+## Contributions 
+* **Team Zeta Minds, Uhack 4.0**
