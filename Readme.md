@@ -77,7 +77,7 @@ python server.py
 As a project designed for real-world utility on constrained devices, Z-Ray employs advanced optimization techniques:
 
 * **INT8 Quantization:** Models are compressed from FP32 to INT8, reducing file sizes by ~75% while maintaining >98% of original accuracy.
-* **ONNX Runtime:** Unified cross-platform inference that allows the backend to run on non-dGPU hardware (Ryzen 5 6600H) with millisecond latency.
+* **ONNX Runtime:** Unified cross-platform inference that allows the backend to run on non-dGPU hardware with millisecond latency.
 * **FOSS Priority:** Built entirely using Free and Open Source Software (Fedora, PyTorch, MONAI, FastAPI).
 
 ---
